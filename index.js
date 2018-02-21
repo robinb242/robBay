@@ -13,7 +13,9 @@ var connection = mysql.createConnection({
 	database: "robBay_db"
 });
 
-figlet('Hello World!!', function(err, data) {
+
+figlet('                    Shop RobBay!', function(err, data) {
+
     if (err) {
         console.log('Something went wrong...');
         console.dir(err);
@@ -51,7 +53,7 @@ connection.query('SELECT * FROM Products', function(err, res){
     },
     {
       type: "input",
-      name: "qty",
+      name: "quantity",
       message: "How many would you like to purchase?",
       validate: function(value){
         if(isNaN(value)){
@@ -64,8 +66,9 @@ connection.query('SELECT * FROM Products', function(err, res){
     ])
   .then(function(ans){
       var whatToBuy = (ans.id)-1;
-      var howMuchToBuy = parseInt(ans.qty);
-      var grandTotal = parseFloat((res[whatToBuy].Price)*howMuchToBuy);
+      var howMuchToBuy = parseInt(ans.quantity);
+      var grandTotal = parseFloat(((res[whatToBuy].price)*howMuchToBuy).toFixed(2));
+
 
       //check if quantity is sufficient
       if(res[whatToBuy].quantity >= howMuchToBuy){
@@ -82,18 +85,21 @@ connection.query('SELECT * FROM Products', function(err, res){
           if(err) throw err;
           var index;
           for(var i = 0; i < deptRes.length; i++){
-            if(deptRes[i].DepartmentName === res[whatToBuy].DepartmentName){
+
+         if(deptRes[i].department === res[whatToBuy].department){
+
               index = i;
             }
           }
           
           //updates totalSales in departments table
-          connection.query("UPDATE Departments SET ? WHERE ?", [
-          {TotalSales: deptRes[index].TotalSales + grandTotal},
+
+          connection.query("UPDATE departments SET ? WHERE ?", [
+ales: deptRes[index].TotalSales + grandTotal},
           {DepartmentName: res[whatToBuy].DepartmentName}
           ], function(err, deptRes){
               if(err) throw err;
-              //console.log("Updated Dept Sales.");
+
           });
         });
 
@@ -113,7 +119,9 @@ function reprompt(){
     name: "reply",
     message: "Would you like to purchase another item?"
   }]).then(function(ans){
-    if(ans.reply){
+
+    if(ans.reply == true){
+
       start();
     } else{
       console.log("Thank you1 Please come again!");
@@ -121,4 +129,3 @@ function reprompt(){
   });
 }
 
-start();
