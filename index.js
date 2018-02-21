@@ -89,8 +89,8 @@ connection.query('SELECT * FROM Products', function(err, res){
           
           //updates totalSales in departments table
           connection.query("UPDATE Departments SET ? WHERE ?", [
-          {TotalSales: deptRes[index].TotalSales + grandTotal},
-          {DepartmentName: res[whatToBuy].DepartmentName}
+          {sales: deptRes[index].sales + grandTotal},
+          {department: res[whatToBuy].department}
           ], function(err, deptRes){
               if(err) throw err;
               //console.log("Updated Dept Sales.");
@@ -113,7 +113,7 @@ function reprompt(){
     name: "reply",
     message: "Would you like to purchase another item?"
   }]).then(function(ans){
-    if(ans.reply){
+    if(ans.reply == true){
       start();
     } else{
       console.log("Thank you1 Please come again!");
