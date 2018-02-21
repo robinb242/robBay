@@ -1,0 +1,25 @@
+{
+  "name": "robBay",
+  "version": "1.0.0",
+  "description": "Shopping site a la Amazon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robinb242/robBay.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robinb242/robBay/issues"
+  },
+  "homepage": "https://github.com/robinb242/robBay#readme",
+  "dependencies": {
+    "figlet": "^1.2.0",
+    "inquirer": "^5.1.0",
+    "mysql": "^2.15.0"
+  }
+}
