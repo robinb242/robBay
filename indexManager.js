@@ -1,3 +1,11 @@
+
+/* <program>  Copyright (C) <year>  <name of author>
+
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details.
+*/
+
 //require mysql and inquirer
 var mysql = require('mysql');
 var inquirer = require('inquirer');
@@ -7,7 +15,7 @@ var connection = mysql.createConnection({
   port: 3306,
   user: "root",
   password: "",
-  database: "Bamazon"
+  database: "robBay_db"
 })
 
 function start(){
@@ -35,12 +43,12 @@ function start(){
 function viewProducts(){
   console.log('>>>>>>Viewing Products<<<<<<');
 
-  connection.query('SELECT * FROM Products', function(err, res){
+  connection.query('SELECT * FROM products', function(err, res){
   if(err) throw err;
   console.log('----------------------------------------------------------------------------------------------------')
 
   for(var i = 0; i<res.length;i++){
-    console.log("ID: " + res[i].ItemID + " | " + "Product: " + res[i].ProductName + " | " + "Department: " + res[i].DepartmentName + " | " + "Price: " + res[i].Price + " | " + "QTY: " + res[i].StockQuantity);
+    console.log("ID: " + res[i].id + " | " + "Product: " + res[i].itemDesc + " | " + "Department: " + res[i].department + " | " + "Price: " + res[i].price + " | " + "QTY: " + res[i].quantity);
     console.log('--------------------------------------------------------------------------------------------------')
   }
 
@@ -58,7 +66,7 @@ function viewLowInventory(){
 
   for(var i = 0; i<res.length;i++){
     if(res[i].StockQuantity <= 5){
-    console.log("ID: " + res[i].ItemID + " | " + "Product: " + res[i].ProductName + " | " + "Department: " + res[i].DepartmentName + " | " + "Price: " + res[i].Price + " | " + "QTY: " + res[i].StockQuantity);
+    console.log("ID: " + res[i].id + " | " + "Product: " + res[i].itemDesc + " | " + "Department: " + res[i].department + " | " + "Price: " + res[i].price + " | " + "QTY: " + res[i].quantity);
     console.log('--------------------------------------------------------------------------------------------------');
     }
   }
@@ -76,7 +84,7 @@ function addToInventory(){
   var itemArray = [];
   //pushes each item into an itemArray
   for(var i=0; i<res.length; i++){
-    itemArray.push(res[i].ProductName);
+    itemArray.push(res[i].itemDesc);
   }
 
   inquirer.prompt([{
@@ -95,8 +103,8 @@ function addToInventory(){
     }]).then(function(ans){
       var currentQty;
       for(var i=0; i<res.length; i++){
-        if(res[i].ProductName === ans.product){
-          currentQty = res[i].StockQuantity;
+        if(res[i].itemDesc === ans.product){
+          currentQty = res[i].quantity;
         }
       }
       connection.query('UPDATE Products SET ? WHERE ?', [
