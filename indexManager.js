@@ -1,5 +1,5 @@
 
-/* <program>  Copyright (C) <year>  <name of author>
+/* <robBayManager.js>  Copyright (C) <2018>  <Robin Bertuccelli>
 
     This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
     This is free software, and you are welcome to redistribute it
@@ -21,11 +21,11 @@ var connection = mysql.createConnection({
 function start(){
   inquirer.prompt([{
     type: "list",
-    name: "doThing",
+    name: "chooseReport",
     message: "What would you like to do?",
     choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product","End Session"]
   }]).then(function(ans){
-     switch(ans.doThing){
+     switch(ans.chooseReport){
       case "View Products for Sale": viewProducts();
       break;
       case "View Low Inventory": viewLowInventory();
@@ -41,7 +41,7 @@ function start(){
 
 //views all inventory
 function viewProducts(){
-  console.log('>>>>>>Viewing Products<<<<<<');
+  console.log('----------------Viewing Products---------------------');
 
   connection.query('SELECT * FROM products', function(err, res){
   if(err) throw err;
@@ -58,14 +58,14 @@ function viewProducts(){
 
 //views inventory lower than 5
 function viewLowInventory(){
-  console.log('>>>>>>Viewing Low Inventory<<<<<<');
+  console.log('----------------Viewing Low Inventory---------------');
 
-  connection.query('SELECT * FROM Products', function(err, res){
+  connection.query('SELECT * FROM products', function(err, res){
   if(err) throw err;
   console.log('----------------------------------------------------------------------------------------------------')
 
   for(var i = 0; i<res.length;i++){
-    if(res[i].StockQuantity <= 5){
+    if(res[i].quantity <= 5){
     console.log("ID: " + res[i].id + " | " + "Product: " + res[i].itemDesc + " | " + "Department: " + res[i].department + " | " + "Price: " + res[i].price + " | " + "QTY: " + res[i].quantity);
     console.log('--------------------------------------------------------------------------------------------------');
     }
@@ -77,9 +77,9 @@ function viewLowInventory(){
 
 //displays prompt to add more of an item to the store and asks how much
 function addToInventory(){
-  console.log('>>>>>>Adding to Inventory<<<<<<');
+  console.log('--------------Adding to Inventory------------------');
 
-  connection.query('SELECT * FROM Products', function(err, res){
+  connection.query('SELECT * FROM products', function(err, res){
   if(err) throw err;
   var itemArray = [];
   //pushes each item into an itemArray
@@ -107,9 +107,9 @@ function addToInventory(){
           currentQty = res[i].quantity;
         }
       }
-      connection.query('UPDATE Products SET ? WHERE ?', [
-        {StockQuantity: currentQty + parseInt(ans.qty)},
-        {ProductName: ans.product}
+      connection.query('UPDATE products SET ? WHERE ?', [
+        {quantity: currentQty + parseInt(ans.qty)},
+        {itemDesc: ans.product}
         ], function(err, res){
           if(err) throw err;
           console.log('The quantity was updated.');
@@ -128,13 +128,13 @@ function addNewProduct(){
   connection.query('SELECT * FROM Departments', function(err, res){
     if(err) throw err;
     for(var i = 0; i<res.length; i++){
-      deptNames.push(res[i].DepartmentName);
+      deptNames.push(res[i].department);
     }
   })
 
   inquirer.prompt([{
     type: "input",
-    name: "product",
+    name: "products",
     message: "Product: ",
     validate: function(value){
       if(value){return true;}
@@ -162,11 +162,11 @@ function addNewProduct(){
       else{return false;}
     }
   }]).then(function(ans){
-    connection.query('INSERT INTO Products SET ?',{
-      ProductName: ans.product,
-      DepartmentName: ans.department,
-      Price: ans.price,
-      StockQuantity: ans.quantity
+    connection.query('INSERT INTO products SET ?',{
+      itemDesc: ans.products,
+      department: ans.department,
+      price: ans.price,
+      quantity: ans.quantity
     }, function(err, res){
       if(err) throw err;
       console.log('Another item was added to the store.');
@@ -175,4 +175,3 @@ function addNewProduct(){
   });
 }
 
-start();
